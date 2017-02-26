@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc -p src/",
-    "start": "lite-server -c=bs-config.json"
+    "serve": "lite-server -c=bs-config.json",
+    "start": "npm run serve"
   },
   "repository": {
     "type": "git",
