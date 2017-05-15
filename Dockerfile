@@ -1,23 +1,23 @@
-# Create image based on the official Node 6 image from dockerhub
-FROM node:6
+FROM node:6.9.2
 
-# Create a directory where our app will be placed
-RUN mkdir -p /usr/src/app
+RUN useradd --user-group --create-home --shell /bin/false app
 
-# Change directory so that our commands run inside this new directory
-WORKDIR /usr/src/app
+ENV APP_NAME "angular-docker"
+ENV APP_USER "app"
+ENV HOME /home/$APP_USER
+ENV APP_DIR $HOME/$APP_NAME
 
-# Copy dependency definitions
-COPY package.json /usr/src/app
+RUN npm install --global angular-cli
 
-# Install dependecies
-RUN npm install
+WORKDIR $APP_DIR
+COPY package.json $APP_DIR/package.json
+RUN npm install && npm cache clean
+COPY . $APP_DIR
+RUN chown -R $APP_USER:$APP_USER $HOME/*
 
-# Get all the code needed to run the app
-COPY . /usr/src/app
+USER $APP_USER
+WORKDIR $APP_DIR
 
-# Expose the port the app runs in
-EXPOSE 7878
+EXPOSE 4200 49152
 
-# Serve the app
-CMD ["npm", "start"]
+CMD ["npm", "start", "--host=0.0.0.0"]
